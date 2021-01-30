@@ -14,14 +14,23 @@ class CommandServiceProvider extends ServiceProvider
     public function boot()
     {
         if ($this->app->runningInConsole()) {
-            $this->commands([
+            $commands = [
                 \SirMathays\Console\Commands\ClassMakeCommand::class,
                 \SirMathays\Console\Commands\InterfaceMakeCommand::class,
-                \SirMathays\Console\Commands\QueryFilterMakeCommand::class,
-                \SirMathays\Console\Commands\QuerySortMakeCommand::class,
                 \SirMathays\Console\Commands\RelationshipMakeCommand::class,
                 \SirMathays\Console\Commands\TraitMakeCommand::class,
-            ]);
+            ];
+
+            // If spatie query builder package exists.
+            if (interface_exists('Spatie\QueryBuilder\Sorts\Sort')) {
+                $commands[] = \SirMathays\Console\Commands\QuerySortMakeCommand::class;
+            }
+
+            if (interface_exists('Spatie\QueryBuilder\Filters\Filter')) {
+                $commands[] = \SirMathays\Console\Commands\QueryFilterMakeCommand::class;
+            }
+
+            $this->commands($commands);
         }
     }
 }
