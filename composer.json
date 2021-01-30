@@ -3,7 +3,7 @@
     "description": "Adds some very convenient commands to your Laravel project",
     "require": {
         "php": ">=7.1.3",
-        "illuminate/support": "^8.25"
+        "laravel/framework": ">=6.0"
     },
     "require-dev": {
         "phpunit/phpunit": "~7.0"
