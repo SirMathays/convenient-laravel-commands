@@ -113,7 +113,7 @@ class RelationshipMakeCommand extends GeneratorCommand
             : $this->qualifyModel($model);
 
         $relName = $relation->getNameAsStr();
-        $relCount = $relation->count;
+        $relCount = $relation->getCount();
         
         $namespacedInstanceClass = $relation->getNamespacedInstanceClass($namespacedModel);
 
@@ -124,7 +124,7 @@ class RelationshipMakeCommand extends GeneratorCommand
             '{{ namespacedInstanceClass }}' => $namespacedInstanceClass,
             '{{ namespacedModel }}' => $namespacedModel,
             '{{ namespacedRelationClass }}' => $relation->class,
-            '{{ relationClass }}' => (string) $relName,
+            '{{ relationClass }}' => $relation->getName(),
             '{{ relationMethod }}' => (string) $relName->camel(),
             '{{ snakeUpperCaseClassName }}' => (string) Str::of($this->getNameInput())->snake()->upper(),
             '{{ relationship }}' => $relationship,

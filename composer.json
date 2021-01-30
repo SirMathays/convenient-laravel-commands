@@ -13,6 +13,15 @@
             "SirMathays\\": "src/"
         }
     },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "~/Code/Packages/laravel-extra-commands",
+            "options": {
+                "symlink": true
+            }
+        }
+    ],
     "extra": {
         "laravel": {
             "providers": [

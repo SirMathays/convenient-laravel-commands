@@ -10,21 +10,34 @@ abstract class RelationBridge
     /**
      * @var string
      */
-    public static $class;
+    protected $class;
 
     /**
      * @var string
      */
-    public static $count;
+    protected $count;
 
     /**
      * Get relation name.
      *
+     * @param bool $basename
      * @return string
      */
-    public function getName(): string
+    public function getName(bool $basename = true): string
     {
-        return class_basename($this->class);
+        return $basename 
+            ? class_basename($this->class)
+            : $this->class;
+    }
+
+    /**
+     * Return count.
+     *
+     * @return int
+     */
+    public function getCount(): int
+    {
+        return $this->count ?? 1;
     }
 
     /**
@@ -40,8 +53,8 @@ abstract class RelationBridge
     public function getNamespacedInstanceClass($namespacedModel): string
     {
         return collect([
-            "\\$namespacedModel" => in_array($this->count, [1, 3]),
-            '\\' . Collection::class => $this->count > 1,
+            "\\$namespacedModel" => in_array($this->getCount(), [1, 3]),
+            '\\' . Collection::class => $this->getCount() > 1,
         ])->filter()->keys()->implode("|");
     }
 
