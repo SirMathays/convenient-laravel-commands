@@ -4,7 +4,7 @@ namespace SirMathays;
 
 use Illuminate\Support\ServiceProvider;
 
-class CommandServiceProvider extends ServiceProvider
+class ExtraCommandServiceProvider extends ServiceProvider
 {
     /**
      * Bootstrap any package services.
@@ -12,6 +12,16 @@ class CommandServiceProvider extends ServiceProvider
      * @return void
      */
     public function boot()
+    {
+        $this->bootConsoleCommands();
+    }
+
+    /**
+     * Commands booter.
+     *
+     * @return void
+     */
+    protected function bootConsoleCommands(): void
     {
         if ($this->app->runningInConsole()) {
             $commands = [

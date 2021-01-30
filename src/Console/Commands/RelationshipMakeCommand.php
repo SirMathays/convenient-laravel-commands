@@ -4,21 +4,11 @@ namespace SirMathays\Console\Commands;
 
 use SirMathays\Console\GeneratorCommand;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasManyThrough;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
-use Illuminate\Database\Eloquent\Relations\HasOneThrough;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
-use Illuminate\Database\Eloquent\Relations\MorphOne;
-use Illuminate\Database\Eloquent\Relations\MorphOneOrMany;
-use Illuminate\Database\Eloquent\Relations\MorphPivot;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Str;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection as SupportCollection;
+use SirMathays\Relations\RelationBridge;
 use Symfony\Component\Console\Input\InputOption;
 
 class RelationshipMakeCommand extends GeneratorCommand
@@ -45,26 +35,40 @@ class RelationshipMakeCommand extends GeneratorCommand
     protected $type = 'Relationship';
 
     /**
-     * Supported relations. The current order shouldn't be edited!
-
-     * @var (string|int)[][]
+     * Supported relation bridges.
+     *
+     * @var SupportCollection
      */
     protected $supportedRelations = [
-        ['class' => HasOneOrMany::class, 'count' => 3],
-        ['class' => HasOneThrough::class],
-        ['class' => HasManyThrough::class, 'count' => 2],
-        ['class' => HasMany::class, 'count' => 2],
-        ['class' => HasOne::class],
-        ['class' => BelongsToMany::class, 'count' => 2],
-        ['class' => BelongsTo::class],
-        ['class' => MorphOneOrMany::class, 'simple' => true],
-        ['class' => MorphToMany::class, 'simple' => true],
-        ['class' => MorphMany::class, 'simple' => true],
-        ['class' => MorphOne::class, 'simple' => true],
-        ['class' => MorphPivot::class, 'simple' => true],
-        ['class' => MorphTo::class, 'simple' => true]
+        \SirMathays\Relations\HasOneOrManyBridge::class,
+        \SirMathays\Relations\HasOneThroughBridge::class,
+        \SirMathays\Relations\HasOneBridge::class,
+        \SirMathays\Relations\HasManyThroughBridge::class,
+        \SirMathays\Relations\HasManyBridge::class,
+        \SirMathays\Relations\BelongsToManyBridge::class,
+        \SirMathays\Relations\BelongsToBridge::class,
+        \SirMathays\Relations\MorphOneOrManyBridge::class,
+        \SirMathays\Relations\MorphToManyBridge::class,
+        \SirMathays\Relations\MorphManyBridge::class,
+        \SirMathays\Relations\MorphOneBridge::class,
+        \SirMathays\Relations\MorphToBridge::class,
     ];
 
+    public function __construct(Filesystem $files)
+    {
+        parent::__construct($files);
+
+        $this->supportedRelations = collect($this->supportedRelations)
+            ->map(function ($bridgeClass) {
+                return new $bridgeClass;
+            });
+    }
+
+    /**
+     * Undocumented function
+     *
+     * @return void
+     */
     public function handle()
     {
         if ($this->option('explicit') && (!$this->option('relation') || !$this->option('model'))) {
@@ -101,29 +105,25 @@ class RelationshipMakeCommand extends GeneratorCommand
      */
     protected function replaceStubVariables($stub)
     {
-        $relation = $this->getRelationDetails();
+        $relation = $this->getRelationBridge();
         $model = $this->getModel();
 
         $namespacedModel = Str::startsWith($model, '\\')
             ? trim($model, '\\')
             : $this->qualifyModel($model);
 
-        $relName = Str::of($relation['name']);
-        $relCount = $relation['count'];
+        $relName = $relation->getNameAsStr();
+        $relCount = $relation->count;
         
-        $namespacedInstanceClass = collect([
-            "\\$namespacedModel" => in_array($relCount, [1, 3]),
-            '\\' . Collection::class => $relCount > 1,
-        ])->filter()->keys()->implode("|");
+        $namespacedInstanceClass = $relation->getNamespacedInstanceClass($namespacedModel);
 
-        $relationship = Str::plural(Str::camel($model), $relCount);
-
-        $relationshipString = Str::of($relationship)->singular()->snake(' ');
+        $relationship = Str::of($model)->camel()->plural($relCount);
+        $relationshipString = $relationship->singular()->snake(' ');
 
         $replace = [
             '{{ namespacedInstanceClass }}' => $namespacedInstanceClass,
             '{{ namespacedModel }}' => $namespacedModel,
-            '{{ namespacedRelationClass }}' => $relation['class'],
+            '{{ namespacedRelationClass }}' => $relation->class,
             '{{ relationClass }}' => (string) $relName,
             '{{ relationMethod }}' => (string) $relName->camel(),
             '{{ snakeUpperCaseClassName }}' => (string) Str::of($this->getNameInput())->snake()->upper(),
@@ -174,32 +174,20 @@ class RelationshipMakeCommand extends GeneratorCommand
      */
     protected function relationSupported(): bool
     {
-        $relationName = $this->getRelation();
-
-        return !is_null(collect($this->supportedRelations)->first(function ($relation) use ($relationName) {
-            return class_basename($relation['class']) == $relationName;
-        }));
+        return !is_null($this->getRelationBridge());
     }
 
     /**
      * Parse relation from name.
      *
-     * @return array
+     * @return \SirMathays\Relations\RelationBridge|null
      */
-    protected function getRelationDetails(): array
+    protected function getRelationBridge(): ?RelationBridge
     {
-        $relationName = $this->getRelation();
-
-        $details = collect($this->supportedRelations)->first(function ($relation) use ($relationName) {
-            return class_basename($relation['class']) == $relationName;
-        });
-
-        return [
-            'name' => $relationName,
-            'class' => Arr::get($details, 'class'),
-            'count' => Arr::get($details, 'count', 1),
-            'simple' => Arr::get($details, 'simple', false),
-        ];
+        return $this->supportedRelations
+            ->first(function ($relation) {
+                return $relation->getName() == $this->getRelation();
+            });
     }
 
     /**
@@ -212,7 +200,7 @@ class RelationshipMakeCommand extends GeneratorCommand
         $nameInput = Str::of($this->getNameInput())->studly();
 
         foreach ($this->supportedRelations as $relation) {
-            $className = class_basename($relation['class']);
+            $className = $relation->getName();
 
             if ($nameInput->contains($className)) {
                 return $nameInput->after($className)->studly()->singular();
@@ -227,7 +215,8 @@ class RelationshipMakeCommand extends GeneratorCommand
      */
     protected function getDefaultNamespace($rootNamespace)
     {
-        return $this->getDefaultModelNamespace($rootNamespace);
+        return $this->getDefaultModelNamespace($rootNamespace)
+            . '\\Relationships';
     }
 
     /**
@@ -237,7 +226,7 @@ class RelationshipMakeCommand extends GeneratorCommand
      */
     protected function richStub(): bool
     {
-        return !$this->getRelationDetails()['simple'];
+        return !$this->getRelationBridge()->isSimple();
     }
 
     /**

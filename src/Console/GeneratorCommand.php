@@ -43,8 +43,8 @@ abstract class GeneratorCommand extends ConsoleGeneratorCommand
     protected function getDefaultModelNamespace($rootNamespace)
     {
         return is_dir(app_path('Models'))
-            ? $rootNamespace . '\\Models\\Relationships'
-            : $rootNamespace . '\\Relationships';
+            ? $rootNamespace . '\\Models'
+            : $rootNamespace;
     }
 
     /**

@@ -29,6 +29,15 @@ class ClassMakeCommand extends GeneratorCommand
     protected $type = 'Class';
 
     /**
+     * Supported class types.
+     *
+     * @var array
+     */
+    protected $classTypes = [
+        'final', 'abstract', null
+    ];
+
+    /**
      * Build the class with the given name.
      *
      * @param  string  $name
@@ -49,8 +58,13 @@ class ClassMakeCommand extends GeneratorCommand
      */
     protected function replaceClassType($stub)
     {
+        $typeOption = $this->option('type');
+        $classType = in_array($typeOption, $this->classTypes) && is_string($typeOption)
+            ? "$typeOption "
+            : '';
+
         $replace = [
-            '{{ classType }}' => $this->option('abstract') ? 'abstract class' : 'class',
+            '{{ classType }}' => $classType . 'class'
         ];
 
         return str_replace(
@@ -68,7 +82,7 @@ class ClassMakeCommand extends GeneratorCommand
     protected function getOptions()
     {
         return [
-            ['abstract', 'a', InputOption::VALUE_NONE, 'Create abstract class.']
+            ['type', 't', InputOption::VALUE_OPTIONAL, 'Define class type: final/abstract.']
         ];
     }
 }
