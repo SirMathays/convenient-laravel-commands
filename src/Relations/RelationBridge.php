@@ -3,7 +3,7 @@
 namespace SirMathays\Relations;
 
 use Illuminate\Support\Str;
-use Stringable;
+use Illuminate\Support\Stringable;
 
 abstract class RelationBridge
 {
@@ -30,7 +30,7 @@ abstract class RelationBridge
     /**
      * Get relation name as string.
      *
-     * @return \Stringable
+     * @return \Illuminate\Support\Stringable
      */
     public function getNameAsStr(): Stringable
     {
