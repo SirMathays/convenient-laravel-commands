@@ -1,0 +1,23 @@
+<?php
+
+namespace {{ namespace }};
+
+use {{ namespacedModel }};
+use {{ namespacedRelationClass }};
+
+/**
+ * @property {{ namespacedInstanceClass }} ${{ relationship }}
+ * Return {{ relationshipString }}.
+ */
+trait {{ class }}
+{
+    /**
+     * Return {{ relationshipString }}.
+     *
+     * @return \{{ namespacedRelationClass }}
+     */
+    public function {{ relationship }}(): {{ relationClass }}
+    {
+        return $this->{{ relationMethod }}(\{{ namespacedModel }}::class);
+    }
+}
