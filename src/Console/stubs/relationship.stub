@@ -7,12 +7,12 @@ use {{ namespacedRelationClass }};
 
 /**
  * @property {{ namespacedInstanceClass }} ${{ relationship }}
- * Return {{ relationshipString }}.
+ * Return {{ relationshipLongString }}.
  */
 trait {{ class }}
 {
     /**
-     * Return {{ relationshipString }}.
+     * Return {{ relationshipLongString }}.
      *
      * @return \{{ namespacedRelationClass }}
      */
