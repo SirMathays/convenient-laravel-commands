@@ -37,14 +37,4 @@ class QueryFilterMakeCommand extends GeneratorCommand
     {
         return $rootNamespace . "\\Queries\\Filters";
     }
-
-    /**
-     * Return path to stub used for generation.
-     *
-     * @return string
-     */
-    protected function getStubPath()
-    {
-        return 'stubs/query-filter.stub';
-    }
 }

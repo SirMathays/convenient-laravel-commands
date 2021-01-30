@@ -26,14 +26,4 @@ class TraitMakeCommand extends GeneratorCommand
      * @var string
      */
     protected $type = 'Trait';
-
-    /**
-     * Return path to stub used for generation.
-     *
-     * @return string
-     */
-    protected function getStubPath()
-    {
-        return 'stubs/trait.stub';
-    }
 }

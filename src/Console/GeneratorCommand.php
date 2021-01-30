@@ -3,6 +3,7 @@
 namespace SirMathays\Console;
 
 use Illuminate\Console\GeneratorCommand as ConsoleGeneratorCommand;
+use Illuminate\Support\Str;
 
 abstract class GeneratorCommand extends ConsoleGeneratorCommand
 {
@@ -11,7 +12,14 @@ abstract class GeneratorCommand extends ConsoleGeneratorCommand
      *
      * @return string
      */
-    abstract protected function getStubPath();
+    protected function getStubPath()
+    {
+        return (string) Str::of(class_basename(static::class))
+            ->before('MakeCommand')
+            ->kebab()
+            ->start('/stubs/')
+            ->finish('.stub');
+    }
 
     /**
      * Resolve the fully-qualified path to the stub.

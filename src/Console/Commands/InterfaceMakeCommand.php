@@ -26,14 +26,4 @@ class InterfaceMakeCommand extends GeneratorCommand
      * @var string
      */
     protected $type = 'Interface';
-
-    /**
-     * Return path to stub used for generation.
-     *
-     * @return string
-     */
-    protected function getStubPath()
-    {
-        return 'stubs/interface.stub';
-    }
 }

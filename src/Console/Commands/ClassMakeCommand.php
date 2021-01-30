@@ -61,16 +61,6 @@ class ClassMakeCommand extends GeneratorCommand
     }
 
     /**
-     * Return path to stub used for generation.
-     *
-     * @return string
-     */
-    protected function getStubPath()
-    {
-        return 'stubs/class.stub';
-    }
-
-    /**
      * Get the console command arguments.
      *
      * @return array

@@ -34,14 +34,4 @@ class QuerySortMakeCommand extends GeneratorCommand
     {
         return $rootNamespace . "\\Queries\\Sorts";
     }
-
-    /**
-     * Return path to stub used for generation.
-     *
-     * @return string
-     */
-    protected function getStubPath()
-    {
-        return 'stubs/query-sort.stub';
-    }
 }
