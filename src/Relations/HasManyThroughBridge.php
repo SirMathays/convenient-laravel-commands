@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class HasManyThroughBridge extends RelationBridge
 {
-    public static $count = 2;
+    protected $count = 2;
 
-    public static $class = HasManyThrough::class;
+    protected $class = HasManyThrough::class;
 }

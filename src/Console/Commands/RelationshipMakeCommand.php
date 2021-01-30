@@ -123,7 +123,7 @@ class RelationshipMakeCommand extends GeneratorCommand
         $replace = [
             '{{ namespacedInstanceClass }}' => $namespacedInstanceClass,
             '{{ namespacedModel }}' => $namespacedModel,
-            '{{ namespacedRelationClass }}' => $relation->class,
+            '{{ namespacedRelationClass }}' => $relation->getName(false),
             '{{ relationClass }}' => $relation->getName(),
             '{{ relationMethod }}' => (string) $relName->camel(),
             '{{ snakeUpperCaseClassName }}' => (string) Str::of($this->getNameInput())->snake()->upper(),

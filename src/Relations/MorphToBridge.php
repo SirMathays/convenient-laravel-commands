@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class MorphToBridge extends RelationBridge
 {
-    public static $count = 1;
+    protected $count = 1;
 
-    public static $class = MorphTo::class;
+    protected $class = MorphTo::class;
 }

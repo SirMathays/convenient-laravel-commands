@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Relations\MorphOneOrMany;
 
 class MorphOneOrManyBridge extends RelationBridge
 {
-    public static $count = 1;
+    protected $count = 1;
 
-    public static $class = MorphOneOrMany::class;
+    protected $class = MorphOneOrMany::class;
 }

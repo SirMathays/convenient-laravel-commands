@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 
 class HasOneOrManyBridge extends RelationBridge
 {
-    public static $count = 3;
+    protected $count = 3;
 
-    public static $class = HasOneOrMany::class;
+    protected $class = HasOneOrMany::class;
 }

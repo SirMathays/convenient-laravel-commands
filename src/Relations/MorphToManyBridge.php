@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 class MorphToManyBridge extends RelationBridge
 {
-    public static $count = 2;
+    protected $count = 2;
 
-    public static $class = MorphToMany::class;
+    protected $class = MorphToMany::class;
 }

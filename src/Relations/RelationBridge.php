@@ -4,6 +4,7 @@ namespace SirMathays\Relations;
 
 use Illuminate\Support\Str;
 use Illuminate\Support\Stringable;
+use Illuminate\Database\Eloquent\Collection;
 
 abstract class RelationBridge
 {
