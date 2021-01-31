@@ -6,9 +6,11 @@ use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 
 class HasOneThroughBridge extends RelationBridge
 {
-    protected $returnsCollection = false;
+    protected static $relationClassName = HasOneThrough::class;
 
-    protected $class = HasOneThrough::class;
+    protected static $returnsCollection = false;
 
-    protected $modelCount = 2;
+    protected static $modelCount = 2;
+
+    public $stubAffix = 'has-through';
 }

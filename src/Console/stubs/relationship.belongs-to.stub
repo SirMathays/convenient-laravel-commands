@@ -20,7 +20,7 @@ trait {{ class }}
     {
         return defined('static::{{ snakeUpperCaseClassName }}_KEY')
             ? static::{{ snakeUpperCaseClassName }}_KEY
-            : '{{ relationship }}_id';
+            : '{{ foreignKeyPrefix }}_id';
     }
 
     /**

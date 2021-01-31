@@ -13,7 +13,7 @@ abstract class RelationBridge
      * 
      * @var string
      */
-    protected $class;
+    protected static $relationClassName;
 
     /**
      * Whether the relationship instance is a Collection of related Models 
@@ -21,29 +21,29 @@ abstract class RelationBridge
      * 
      * @var bool
      */
-    protected $returnsCollection = true;
-
-    /**
-     * Should the relation use the trait stub file, the relationship stub file
-     * or a special stub file made specifically for the relation in question.
-     * 
-     * @var bool
-     */
-    protected $stubMode = 'normal';
+    protected static $returnsCollection = true;
 
     /**
      * How many Models must be defined for the relation.
      *
      * @var int
      */
-    protected $modelCount = 1;
+    protected static $modelCount = 1;
+
+    /**
+     * The stub affix that will be appended to the stub name.
+     * E.g. 'morph' = 'relationship.morph.stub'
+     * 
+     * @var string|null
+     */
+    public $stubAffix;
 
     /**
      * Get the relation name.
      *
      * @return string
      */
-    public function getName(): string
+    public static function getName(): string
     {
         return Str::before(class_basename(static::class), 'Bridge');
     }
@@ -55,11 +55,44 @@ abstract class RelationBridge
      * Should either the full class name or just it's basename be returned. Defaults to `true`.
      * @return string
      */
-    public function getClassName(bool $basename = true): string
+    public static function getRelationClassName(bool $basename = true): string
     {
         return $basename
-            ? class_basename($this->class)
-            : $this->class;
+            ? class_basename(static::$relationClassName)
+            : static::$relationClassName;
+    }
+
+    /**
+     * Return boolean value whether the relationship instance is 
+     * a Collection of related Models or a single Model.
+     *
+     * @return bool
+     */
+    public static function returnsCollection(): bool
+    {
+        return static::$returnsCollection ?? true;
+    }
+
+    /**
+     * Return the "count" (used by Str::plural primarily)
+     * 1: One, 2: Many
+     *
+     * @return int
+     */
+    public static function getCount(): int
+    {
+        return static::$returnsCollection ? 2 : 1;
+    }
+
+    /**
+     * Return the count of how many models must be defined
+     * for relationship.
+     *
+     * @return int
+     */
+    public static function getModelCount(): int
+    {
+        return static::$modelCount ?? 1;
     }
 
     /**
@@ -69,14 +102,10 @@ abstract class RelationBridge
      */
     public function getStubName(): string
     {
-        if ($this->stubMode == 'simple') {
-            return 'trait.stub';
-        }
-        
         return Str::of('relationship')->when(
-            $this->stubMode == 'special',
+            !is_null($this->stubAffix),
             function (Stringable $str) {
-                return $str->finish('.' . Str::kebab($this->getName()));
+                return $str->finish('.' . $this->stubAffix);
             }
         )->finish('.stub');
     }
@@ -89,39 +118,6 @@ abstract class RelationBridge
     public function getNameAsStr(): Stringable
     {
         return Str::of($this->getName());
-    }
-
-    /**
-     * Return boolean value whether the relationship instance is 
-     * a Collection of related Models or a single Model.
-     *
-     * @return bool
-     */
-    public function returnsCollection(): bool
-    {
-        return $this->returnsCollection ?? true;
-    }
-
-    /**
-     * Return the "count" (used by Str::plural primarily)
-     * 1: One, 2: Many
-     *
-     * @return int
-     */
-    public function getCount(): int
-    {
-        return $this->returnsCollection ? 2 : 1;
-    }
-
-    /**
-     * Return the count of how many models must be defined
-     * for relationship.
-     *
-     * @return int
-     */
-    public function getModelCount(): int
-    {
-        return $this->modelCount ?? 1;
     }
 
     /**

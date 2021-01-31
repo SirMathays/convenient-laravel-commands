@@ -6,9 +6,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class BelongsToBridge extends RelationBridge
 {
-    protected $returnsCollection = false;
+    protected static $relationClassName = BelongsTo::class;
 
-    protected $class = BelongsTo::class;
+    protected static $returnsCollection = false;
 
-    protected $stubMode = 'special';
+    public $stubAffix = 'belongs-to';
 }

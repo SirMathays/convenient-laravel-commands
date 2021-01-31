@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class HasOneBridge extends RelationBridge
 {
-    protected $returnsCollection = false;
+    protected static $relationClassName = HasOne::class;
 
-    protected $class = HasOne::class;
+    protected static $returnsCollection = false;
 }

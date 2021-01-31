@@ -6,9 +6,9 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class HasManyThroughBridge extends RelationBridge
 {
-    protected $class = HasManyThrough::class;
+    protected static $relationClassName = HasManyThrough::class;
 
-    protected $stubMode = 'special';
+    protected static $modelCount = 2;
 
-    protected $modelCount = 2;
+    public $stubAffix = 'has-through';
 }

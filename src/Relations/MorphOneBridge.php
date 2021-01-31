@@ -6,12 +6,9 @@ use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 class MorphOneBridge extends RelationBridge
 {
-    protected $returnsCollection = false;
+    protected static $relationClassName = MorphOne::class;
 
-    protected $class = MorphOne::class;
+    protected static $returnsCollection = false;
 
-    public function getStubName(): string
-    {
-        return 'relationship.morph.stub';
-    }
+    public $stubAffix = 'morph';
 }

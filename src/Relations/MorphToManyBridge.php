@@ -6,10 +6,7 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 class MorphToManyBridge extends RelationBridge
 {
-    protected $class = MorphToMany::class;
+    protected static $relationClassName = MorphToMany::class;
 
-    public function getStubName(): string
-    {
-        return 'relationship.morph.stub';
-    }
+    public $stubAffix = 'morph';
 }
