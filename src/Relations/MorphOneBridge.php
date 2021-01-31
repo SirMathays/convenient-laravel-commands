@@ -9,4 +9,9 @@ class MorphOneBridge extends RelationBridge
     protected $count = 1;
 
     protected $class = MorphOne::class;
+
+    public function getStubName(): string
+    {
+        return 'relationship.morph.stub';
+    }
 }

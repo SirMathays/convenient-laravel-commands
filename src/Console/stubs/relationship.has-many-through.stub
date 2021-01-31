@@ -3,6 +3,7 @@
 namespace {{ namespace }};
 
 use {{ namespacedModel }};
+use {{ namespacedSecondModel }};
 use {{ namespacedRelationClass }};
 
 /**
@@ -18,6 +19,6 @@ trait {{ class }}
      */
     public function {{ relationship }}(): {{ relationClass }}
     {
-        return $this->{{ relationMethod }}({{ model }}::class);
+        return $this->{{ relationMethod }}({{ model }}::class, {{ secondModel }}::class);
     }
 }

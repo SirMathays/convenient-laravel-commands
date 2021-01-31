@@ -12,9 +12,9 @@ abstract class GeneratorCommand extends ConsoleGeneratorCommand
      *
      * @return string
      */
-    protected function getStubPath()
+    protected function getStubPath(): string
     {
-        return (string) Str::of(class_basename(static::class))
+        return Str::of(class_basename(static::class))
             ->before('MakeCommand')
             ->kebab()
             ->start('/stubs/')

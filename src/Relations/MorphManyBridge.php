@@ -9,4 +9,9 @@ class MorphManyBridge extends RelationBridge
     protected $count = 2;
 
     protected $class = MorphMany::class;
+
+    public function getStubName(): string
+    {
+        return 'relationship.morph.stub';
+    }
 }

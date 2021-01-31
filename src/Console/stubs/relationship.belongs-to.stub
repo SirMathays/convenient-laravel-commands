@@ -6,7 +6,7 @@ use {{ namespacedModel }};
 use {{ namespacedRelationClass }};
 
 /**
- * @property {{ namespacedInstanceClass }} ${{ relationship }}
+ * @property {{ namespacedRelationshipInstanceClass }} ${{ relationship }}
  * Return {{ relationshipLongString }}.
  */
 trait {{ class }}
@@ -40,6 +40,6 @@ trait {{ class }}
      */
     public function {{ relationship }}(): {{ relationClass }}
     {
-        return $this->{{ relationMethod }}(\{{ namespacedModel }}::class, $this->get{{ ucRelationship }}KeyName());
+        return $this->{{ relationMethod }}({{ model }}::class, $this->get{{ ucRelationship }}KeyName());
     }
 }

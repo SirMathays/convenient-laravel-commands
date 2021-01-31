@@ -9,4 +9,6 @@ class BelongsToBridge extends RelationBridge
     protected $count = 1;
 
     protected $class = BelongsTo::class;
+
+    protected $stubMode = 'special';
 }

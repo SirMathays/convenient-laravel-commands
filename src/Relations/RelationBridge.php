@@ -4,7 +4,7 @@ namespace SirMathays\Relations;
 
 use Illuminate\Support\Str;
 use Illuminate\Support\Stringable;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection;
 
 abstract class RelationBridge
 {
@@ -19,16 +19,55 @@ abstract class RelationBridge
     protected $count;
 
     /**
+     * @var bool
+     */
+    protected $stubMode = 'normal';
+
+    /**
      * Get relation name.
+     *
+     * @return string
+     */
+    public function getName(): string
+    {
+        return Str::before(class_basename(static::class), 'Bridge');
+    }
+
+    /**
+     * Get relation class name.
      *
      * @param bool $basename
      * @return string
      */
-    public function getName(bool $basename = true): string
+    public function getClassName(bool $basename = true): string
     {
-        return $basename 
+        return $basename
             ? class_basename($this->class)
             : $this->class;
+    }
+
+    public function getStubName(): string
+    {
+        if ($this->stubMode == 'simple') {
+            return 'trait.stub';
+        }
+        
+        return Str::of('relationship')->when(
+            $this->stubMode == 'special',
+            function (Stringable $str) {
+                return $str->finish('.' . Str::kebab($this->getName()));
+            }
+        )->finish('.stub');
+    }
+
+    /**
+     * Get relation name as string.
+     *
+     * @return \Illuminate\Support\Stringable
+     */
+    public function getNameAsStr(): Stringable
+    {
+        return Str::of($this->getName());
     }
 
     /**
@@ -42,25 +81,56 @@ abstract class RelationBridge
     }
 
     /**
-     * Get relation name as string.
+     * Return boolean value whether the stub should be simple.
      *
-     * @return \Illuminate\Support\Stringable
+     * @return bool
      */
-    public function getNameAsStr(): Stringable
-    {
-        return Str::of($this->getName());
-    }
-
-    public function getNamespacedInstanceClass($namespacedModel): string
-    {
-        return collect([
-            "\\$namespacedModel" => in_array($this->getCount(), [1, 3]),
-            '\\' . Collection::class => $this->getCount() > 1,
-        ])->filter()->keys()->implode("|");
-    }
-
     public function isSimple(): bool
     {
         return false;
+    }
+
+    /**
+     * Get pattern used for preg match.
+     *
+     * @return string
+     */
+    public function getNamePattern()
+    {
+        $name = $this->getNameAsStr();
+        $pattern = collect();
+
+        if ($name->contains('Through')) {
+            $pattern->push((string) $name->before('Through'));
+            $pattern->push('Through');
+        } else {
+            $pattern->push((string) $name);
+        }
+
+        return '/' . $pattern->push(null)->implode("(\w*)") . '/';
+    }
+
+    /**
+     * Return boolean value whether given name matches the relation.
+     *
+     * @param string $name
+     * @return bool
+     */
+    public function matchesRelationshipName($name): bool
+    {
+        return preg_match($this->getNamePattern(), $name) > 0;
+    }
+
+    /**
+     * Parse the name pattern.
+     *
+     * @param string $name
+     * @return \Illuminate\Support\Collection
+     */
+    public function getModelsFromName($name): Collection
+    {
+        preg_match($this->getNamePattern(), $name, $matches);
+
+        return collect($matches)->except(0)->values()->filter();
     }
 }

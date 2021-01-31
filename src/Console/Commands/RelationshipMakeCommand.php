@@ -2,12 +2,12 @@
 
 namespace SirMathays\Console\Commands;
 
-use SirMathays\Console\GeneratorCommand;
-use Illuminate\Database\Eloquent\Collection;
+use Exception;
 use Illuminate\Filesystem\Filesystem;
-use Illuminate\Support\Str;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Collection as SupportCollection;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
+use SirMathays\Console\GeneratorCommand;
 use SirMathays\Relations\RelationBridge;
 use Symfony\Component\Console\Input\InputOption;
 
@@ -37,9 +37,9 @@ class RelationshipMakeCommand extends GeneratorCommand
     /**
      * Supported relation bridges.
      *
-     * @var SupportCollection
+     * @var array
      */
-    protected $supportedRelations = [
+    protected $relationBridges = [
         \SirMathays\Relations\HasOneOrManyBridge::class,
         \SirMathays\Relations\HasOneThroughBridge::class,
         \SirMathays\Relations\HasOneBridge::class,
@@ -47,38 +47,35 @@ class RelationshipMakeCommand extends GeneratorCommand
         \SirMathays\Relations\HasManyBridge::class,
         \SirMathays\Relations\BelongsToManyBridge::class,
         \SirMathays\Relations\BelongsToBridge::class,
-        \SirMathays\Relations\MorphOneOrManyBridge::class,
+        \SirMathays\Relations\MorphedByManyBridge::class,
         \SirMathays\Relations\MorphToManyBridge::class,
         \SirMathays\Relations\MorphManyBridge::class,
         \SirMathays\Relations\MorphOneBridge::class,
-        \SirMathays\Relations\MorphToBridge::class,
     ];
 
+    /**
+     * @var RelationBridge
+     */
+    protected $relation;
+
+    /**
+     * Generator command constructor.
+     *
+     * @param \Illuminate\Filesystem\Filesystem $files
+     */
     public function __construct(Filesystem $files)
     {
         parent::__construct($files);
-
-        $this->supportedRelations = collect($this->supportedRelations)
-            ->map(function ($bridgeClass) {
-                return new $bridgeClass;
-            });
     }
 
     /**
-     * Undocumented function
-     *
-     * @return void
+     * {@inheritDoc}
      */
     public function handle()
     {
-        if ($this->option('explicit') && (!$this->option('relation') || !$this->option('model'))) {
-            $this->error("Provide both relation and model options when using explicit mode!");
-            return false;
-        }
-
-        if (!$this->relationSupported()) {
-            $this->error("Given relationship is not supported!");
-            return false; 
+        try { $this->setRelation(); } 
+        catch (\Throwable $th) {
+            return $this->error($th->getMessage());
         }
 
         parent::handle();
@@ -91,10 +88,63 @@ class RelationshipMakeCommand extends GeneratorCommand
      * @return string
      */
     protected function buildClass($name)
-    {   
+    {
         $stub = parent::buildClass($name);
 
-        return $this->richStub() ? $this->replaceStubVariables($stub) : $stub;
+        return $this->replaceStubVariables($stub);
+    }
+
+    /**
+     * Get model name.
+     *
+     * @return string
+     */
+    public function getModel(string $choice = null): string
+    {
+        $option = 'model';
+
+        if (!in_array($choice, $which = [null, 'second'])) {
+            $choice = null;
+        }
+
+        if (!is_null($choice)) {
+            $option = "{$choice}-{$option}";
+        }
+
+        return Str::of(
+            $this->option($option) ??
+                Arr::get(
+                    $this->relation->getModelsFromName($this->getNameInput()),
+                    array_search($choice, $which)
+                )
+        )->singular()->studly();
+    }
+
+    /**
+     * Get qualified model name.
+     *
+     * @param string $choice
+     * @return string
+     */
+    public function getQualifiedModel(string $choice = null): string
+    {
+        if (is_null($model = $this->getModel($choice))) {
+            return '';
+        }
+
+        return Str::startsWith($model, '\\')
+            ? trim($model, '\\')
+            : $this->qualifyModel($model);   
+    }
+
+    /**
+     * Get second model name.
+     *
+     * @return string
+     */
+    public function getSecondModel(): string
+    {
+        return $this->getModel('second');
     }
 
     /**
@@ -105,27 +155,30 @@ class RelationshipMakeCommand extends GeneratorCommand
      */
     protected function replaceStubVariables($stub)
     {
-        $relation = $this->getRelationBridge();
+        $relation = $this->relation;
         $model = $this->getModel();
-
-        $namespacedModel = Str::startsWith($model, '\\')
-            ? trim($model, '\\')
-            : $this->qualifyModel($model);
+        $namespacedModel = $this->getQualifiedModel();
 
         $relName = $relation->getNameAsStr();
         $relCount = $relation->getCount();
-        
-        $namespacedInstanceClass = $relation->getNamespacedInstanceClass($namespacedModel);
+
+        $namespacedRelationshipInstanceClass = collect([
+            "\\$namespacedModel" => in_array($relCount, [1, 3]),
+            '\\' . Collection::class => $relCount > 1,
+        ])->filter()->keys()->implode("|");
 
         $relationship = Str::of($model)->camel()->plural($relCount);
         $relationshipString = $relationship->singular()->snake(' ');
 
         $replace = [
-            '{{ namespacedInstanceClass }}' => $namespacedInstanceClass,
+            '{{ model }}' => $model,
             '{{ namespacedModel }}' => $namespacedModel,
-            '{{ namespacedRelationClass }}' => $relation->getName(false),
-            '{{ relationClass }}' => $relation->getName(),
+            '{{ secondModel }}' => $this->getModel('second'),
+            '{{ namespacedSecondModel }}' => $this->getQualifiedModel('second'),
             '{{ relationMethod }}' => (string) $relName->camel(),
+            '{{ relationClass }}' => $relation->getClassName(),
+            '{{ namespacedRelationClass }}' => $relation->getClassName(false),
+            '{{ namespacedRelationshipInstanceClass }}' => $namespacedRelationshipInstanceClass,
             '{{ snakeUpperCaseClassName }}' => (string) Str::of($this->getNameInput())->snake()->upper(),
             '{{ relationship }}' => $relationship,
             '{{ ucRelationship }}' => ucfirst($relationship),
@@ -136,78 +189,16 @@ class RelationshipMakeCommand extends GeneratorCommand
         ];
 
         $stub = str_replace(
-            array_keys($replace), array_values($replace), $stub
+            array_keys($replace),
+            array_values($replace),
+            $stub
         );
 
         return str_replace(
-            "use {$namespacedModel};\nuse {$namespacedModel};", "use {$namespacedModel};", $stub
+            "use {$namespacedModel};\nuse {$namespacedModel};",
+            "use {$namespacedModel};",
+            $stub
         );
-    }
-
-    /**
-     * Get either inputted relation or parsed from name.
-     *
-     * @return string
-     */
-    protected function getRelation(): string
-    {
-        return Str::studly(
-            $this->option('relation') ?? Str::before($this->getNameInput(), $this->parseModelFromName())
-        );
-    }
-
-    /**
-     * Get either inputted model or parsed from name.
-     *
-     * @return string
-     */
-    protected function getModel(): string
-    {
-        return $this->option('model')
-            ?? $this->parseModelFromName();
-    }
-
-    /**
-     * Return boolean value whether given relation in name is supported.
-     *
-     * @return bool
-     */
-    protected function relationSupported(): bool
-    {
-        return !is_null($this->getRelationBridge());
-    }
-
-    /**
-     * Parse relation from name.
-     *
-     * @return \SirMathays\Relations\RelationBridge|null
-     */
-    protected function getRelationBridge(): ?RelationBridge
-    {
-        return $this->supportedRelations
-            ->first(function ($relation) {
-                return $relation->getName() == $this->getRelation();
-            });
-    }
-
-    /**
-     * Parse model from name input.
-     *
-     * @return string
-     */
-    protected function parseModelFromName(): string
-    {
-        $nameInput = Str::of($this->getNameInput())->studly();
-
-        foreach ($this->supportedRelations as $relation) {
-            $className = $relation->getName();
-
-            if ($nameInput->contains($className)) {
-                return $nameInput->after($className)->studly()->singular();
-            }
-        }
-
-        return $nameInput;
     }
 
     /**
@@ -220,39 +211,13 @@ class RelationshipMakeCommand extends GeneratorCommand
     }
 
     /**
-     * Return boolean value whether rich stub should be utilized.
-     *
-     * @return bool
-     */
-    protected function richStub(): bool
-    {
-        return !$this->getRelationBridge()->isSimple();
-    }
-
-    /**
-     * Get the stub file for the generator.
+     * Undocumented function
      *
      * @return string
      */
-    protected function getStub()
+    protected function getStubPath(): string
     {
-        return $this->richStub() 
-            ? $this->getStubPath()
-            : $this->resolveStubPath('/stubs/trait.stub');
-    }
-
-    /**
-     * Get the relationship stub file for the generator.
-     *
-     * @return string
-     */
-    protected function getStubPath()
-    {
-        $relation = Str::kebab($this->getRelation());
-
-        return file_exists($specialStub = $this->resolveStubPath("/stubs/relationship.$relation.stub"))
-            ? $specialStub
-            : $this->resolveStubPath('/stubs/relationship.stub');
+        return '/stubs/' . $this->relation->getStubName();
     }
 
     /**
@@ -265,7 +230,35 @@ class RelationshipMakeCommand extends GeneratorCommand
         return [
             ['explicit', 'e', InputOption::VALUE_NONE, 'Skip implicit model and relation binding'],
             ['model', 'm', InputOption::VALUE_OPTIONAL, 'The model that the relationship is based on'],
+            ['second-model', 's', InputOption::VALUE_OPTIONAL, 'The model that the relationship possibly uses'],
             ['relation', 'r', InputOption::VALUE_OPTIONAL, 'The relation that the relationship is based on'],
         ];
+    }
+
+    /**
+     * Set relation.
+     *
+     * @return void
+     * @throws \Exception
+     */
+    protected function setRelation(): void
+    {
+        foreach ($this->relationBridges as $bridgeClass) {
+            $instance = new $bridgeClass;
+
+            if ($this->option('relation')) {
+                if ($this->option('relation') == $instance->getName()) {
+                    $this->relation = $instance;
+                    break;
+                }
+            } else if ($instance->matchesRelationshipName($this->getNameInput())) {
+                $this->relation = $instance;
+                break;
+            }
+        }
+
+        if (is_null($this->relation)) {
+            throw new Exception("Invalid relationship name given!");
+        }
     }
 }
