@@ -73,9 +73,8 @@ class RelationshipMakeCommand extends GeneratorCommand
             return false;
         }
 
-        try { $this->setRelation(); } 
-        catch (\Throwable $th) {
-            $this->error($th->getMessage());
+        if ($this->setBridge() === false) {
+            $this->error("Invalid relationship name given!");
             return false;
         }
 
@@ -245,36 +244,31 @@ class RelationshipMakeCommand extends GeneratorCommand
     {
         return [
             ['explicit', 'e', InputOption::VALUE_NONE, 'Skip implicit model and relation binding'],
-            ['model', 'm', InputOption::VALUE_OPTIONAL, 'The model that the relationship is based on'],
-            ['second-model', 's', InputOption::VALUE_OPTIONAL, 'The model that the relationship possibly uses'],
-            ['relation', 'r', InputOption::VALUE_OPTIONAL, 'The relation that the relationship is based on'],
+            ['model', null, InputOption::VALUE_OPTIONAL, 'The model that the relationship is based on'],
+            ['second-model', null, InputOption::VALUE_OPTIONAL, 'The second model that the relationship uses, if necessary'],
+            ['relation', null, InputOption::VALUE_OPTIONAL, 'The relation that the relationship is based on'],
         ];
     }
 
     /**
-     * Set relation.
+     * Set relation bridge.
      *
-     * @return void
-     * @throws \Exception
+     * @return bool
      */
-    protected function setRelation(): void
+    protected function setBridge(): bool
     {
         foreach (self::$relationBridges as $bridgeClass) {
-            $instance = new $bridgeClass;
-
             if ($this->option('relation')) {
-                if ($this->option('relation') == $instance->getName()) {
-                    $this->bridge = $instance;
+                if ($this->option('relation') == $bridgeClass::getName()) {
+                    $this->bridge = new $bridgeClass;
                     break;
                 }
-            } else if ($instance->matchesRelationshipName($this->getNameInput())) {
-                $this->bridge = $instance;
+            } else if ($bridgeClass::matchesRelationshipName($this->getNameInput())) {
+                $this->bridge = new $bridgeClass;
                 break;
             }
         }
 
-        if (is_null($this->bridge)) {
-            throw new Exception("Invalid relationship name given!");
-        }
+        return $this->bridge instanceof RelationBridge;
     }
 }

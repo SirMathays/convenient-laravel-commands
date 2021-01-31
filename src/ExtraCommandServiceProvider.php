@@ -29,6 +29,7 @@ class ExtraCommandServiceProvider extends ServiceProvider
                 \SirMathays\Console\Commands\InterfaceMakeCommand::class,
                 \SirMathays\Console\Commands\RelationshipMakeCommand::class,
                 \SirMathays\Console\Commands\TraitMakeCommand::class,
+                \SirMathays\Console\Commands\ConcernMakeCommand::class,
             ];
 
             // If spatie query builder package exists.

@@ -115,9 +115,9 @@ abstract class RelationBridge
      *
      * @return \Illuminate\Support\Stringable
      */
-    public function getNameAsStr(): Stringable
+    public static function getNameAsStr(): Stringable
     {
-        return Str::of($this->getName());
+        return Str::of(static::getName());
     }
 
     /**
@@ -125,9 +125,9 @@ abstract class RelationBridge
      *
      * @return string
      */
-    public function getNamePattern()
+    public static function getNamePattern()
     {
-        $name = $this->getNameAsStr();
+        $name = static::getNameAsStr();
         $pattern = collect();
 
         if ($name->contains('Through')) {
@@ -146,9 +146,9 @@ abstract class RelationBridge
      * @param string $name
      * @return bool
      */
-    public function matchesRelationshipName($name): bool
+    public static function matchesRelationshipName($name): bool
     {
-        return preg_match($this->getNamePattern(), $name) > 0;
+        return preg_match(static::getNamePattern(), $name) > 0;
     }
 
     /**
@@ -159,7 +159,7 @@ abstract class RelationBridge
      */
     public function getModelsFromName($name): Collection
     {
-        preg_match($this->getNamePattern(), $name, $matches);
+        preg_match(static::getNamePattern(), $name, $matches);
 
         return collect($matches)->except(0)->values()->filter();
     }

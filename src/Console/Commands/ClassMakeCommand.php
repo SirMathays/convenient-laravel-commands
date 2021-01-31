@@ -82,7 +82,7 @@ class ClassMakeCommand extends GeneratorCommand
     protected function getOptions()
     {
         return [
-            ['type', 't', InputOption::VALUE_OPTIONAL, 'Define class type: final/abstract.']
+            ['type', null, InputOption::VALUE_OPTIONAL, 'Define class type: final/abstract.']
         ];
     }
 }
