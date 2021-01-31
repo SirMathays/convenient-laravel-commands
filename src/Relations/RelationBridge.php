@@ -9,22 +9,37 @@ use Illuminate\Support\Collection;
 abstract class RelationBridge
 {
     /**
+     * The relation class name.
+     * 
      * @var string
      */
     protected $class;
 
     /**
-     * @var string
+     * Whether the relationship instance is a Collection of related Models 
+     * or a single Model.
+     * 
+     * @var bool
      */
-    protected $count;
+    protected $returnsCollection = true;
 
     /**
+     * Should the relation use the trait stub file, the relationship stub file
+     * or a special stub file made specifically for the relation in question.
+     * 
      * @var bool
      */
     protected $stubMode = 'normal';
 
     /**
-     * Get relation name.
+     * How many Models must be defined for the relation.
+     *
+     * @var int
+     */
+    protected $modelCount = 1;
+
+    /**
+     * Get the relation name.
      *
      * @return string
      */
@@ -34,9 +49,10 @@ abstract class RelationBridge
     }
 
     /**
-     * Get relation class name.
+     * Get the relation class name.
      *
-     * @param bool $basename
+     * @param bool $basename [optional]
+     * Should either the full class name or just it's basename be returned. Defaults to `true`.
      * @return string
      */
     public function getClassName(bool $basename = true): string
@@ -46,6 +62,11 @@ abstract class RelationBridge
             : $this->class;
     }
 
+    /**
+     * Get the name basename for the stub.
+     *
+     * @return string
+     */
     public function getStubName(): string
     {
         if ($this->stubMode == 'simple') {
@@ -61,7 +82,7 @@ abstract class RelationBridge
     }
 
     /**
-     * Get relation name as string.
+     * Get the relation name as a Stringable object.
      *
      * @return \Illuminate\Support\Stringable
      */
@@ -71,27 +92,40 @@ abstract class RelationBridge
     }
 
     /**
-     * Return count.
+     * Return boolean value whether the relationship instance is 
+     * a Collection of related Models or a single Model.
+     *
+     * @return bool
+     */
+    public function returnsCollection(): bool
+    {
+        return $this->returnsCollection ?? true;
+    }
+
+    /**
+     * Return the "count" (used by Str::plural primarily)
+     * 1: One, 2: Many
      *
      * @return int
      */
     public function getCount(): int
     {
-        return $this->count ?? 1;
+        return $this->returnsCollection ? 2 : 1;
     }
 
     /**
-     * Return boolean value whether the stub should be simple.
+     * Return the count of how many models must be defined
+     * for relationship.
      *
-     * @return bool
+     * @return int
      */
-    public function isSimple(): bool
+    public function getModelCount(): int
     {
-        return false;
+        return $this->modelCount ?? 1;
     }
 
     /**
-     * Get pattern used for preg match.
+     * Get the pattern used for preg match.
      *
      * @return string
      */
@@ -122,7 +156,7 @@ abstract class RelationBridge
     }
 
     /**
-     * Parse the name pattern.
+     * Return a Collection of models parsed with the name pattern.
      *
      * @param string $name
      * @return \Illuminate\Support\Collection

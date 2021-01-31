@@ -5,7 +5,7 @@ namespace SirMathays\Console\Commands;
 use Exception;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Str;
 use SirMathays\Console\GeneratorCommand;
 use SirMathays\Relations\RelationBridge;
@@ -40,13 +40,12 @@ class RelationshipMakeCommand extends GeneratorCommand
      * @var array
      */
     protected $relationBridges = [
-        \SirMathays\Relations\HasOneOrManyBridge::class,
-        \SirMathays\Relations\HasOneThroughBridge::class,
-        \SirMathays\Relations\HasOneBridge::class,
-        \SirMathays\Relations\HasManyThroughBridge::class,
-        \SirMathays\Relations\HasManyBridge::class,
         \SirMathays\Relations\BelongsToManyBridge::class,
         \SirMathays\Relations\BelongsToBridge::class,
+        \SirMathays\Relations\HasManyThroughBridge::class,
+        \SirMathays\Relations\HasManyBridge::class,
+        \SirMathays\Relations\HasOneThroughBridge::class,
+        \SirMathays\Relations\HasOneBridge::class,
         \SirMathays\Relations\MorphedByManyBridge::class,
         \SirMathays\Relations\MorphToManyBridge::class,
         \SirMathays\Relations\MorphManyBridge::class,
@@ -73,9 +72,22 @@ class RelationshipMakeCommand extends GeneratorCommand
      */
     public function handle()
     {
+        $explicit = $this->option('explicit');
+        $errorText = "Both relation and model(s) must be provided when using explicit mode!";
+
+        // If explicit mode is used but relation or model is not given as options.
+        if ($explicit && (!$this->option('relation') || !$this->option('model'))) {
+            return $this->error($errorText);
+        }
+
         try { $this->setRelation(); } 
         catch (\Throwable $th) {
             return $this->error($th->getMessage());
+        }
+
+        // If explicit mode is used but seond model is not given as an option and the relation requires it.
+        if ($this->relation->getModelCount() > 1 && $explicit && !$this->option('second-model')) {
+            return $this->error($errorText);
         }
 
         parent::handle();
@@ -162,10 +174,9 @@ class RelationshipMakeCommand extends GeneratorCommand
         $relName = $relation->getNameAsStr();
         $relCount = $relation->getCount();
 
-        $namespacedRelationshipInstanceClass = collect([
-            "\\$namespacedModel" => in_array($relCount, [1, 3]),
-            '\\' . Collection::class => $relCount > 1,
-        ])->filter()->keys()->implode("|");
+        $namespacedRelationshipInstanceClass = $relation->returnsCollection()
+            ? '\\' . Collection::class
+            : "\\$namespacedModel";
 
         $relationship = Str::of($model)->camel()->plural($relCount);
         $relationshipString = $relationship->singular()->snake(' ');

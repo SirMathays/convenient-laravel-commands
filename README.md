@@ -12,26 +12,26 @@ Install the package with Composer:
 
 This package provides following artisan make commands.
 
-Commands for creating PHP OOP types:
+### Commands for creating PHP OOP types
 
     artisan make:class --type[=TYPE] <name>
 
-Valid type options: final, abstract.
+> Valid type options: final, abstract.
 
     artisan make:interface <name>
     artisan make:trait <name>
 
-Commands for Model development:
+### Commands for Model development
 
     artisan make:concern <name>
 
-Glorified trait following Laravel naming conventions. Defaults to the folder Models exist in.
+> Glorified trait following Laravel naming conventions. Defaults to the folder Models exist in.
 
     artisan make:relationship --explicit --model[=MODEL] --relation[=RELATION] <name>
 
-For relationship traits. Command parses the given command name and tries to resolve both the relation and the model class. Both can be overwritten by providing options for each. By adding explicit option, parsing will not be used and options for both model and relation must be provided.
+> For relationship traits. Command parses the given command name and tries to resolve both the relation and the model class. Both can be overwritten by providing options for each. By adding explicit option, parsing will not be used and options for both model and relation must be provided.
 
-Commands for creating classes for Spatie's QueryBuilder _(if part of the project)_:
+### Commands for creating classes for Spatie's QueryBuilder _(if part of the project)_
 
     artisan make:query-filter <name>
     artisan make:query-sort <name>
