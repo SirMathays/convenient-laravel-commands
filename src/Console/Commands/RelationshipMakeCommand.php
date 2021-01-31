@@ -69,20 +69,25 @@ class RelationshipMakeCommand extends GeneratorCommand
 
         // If explicit mode is used but relation or model is not given as options.
         if ($explicit && (!$this->option('relation') || !$this->option('model'))) {
-            return $this->error($errorText);
+            $this->error($errorText);
+            return false;
         }
 
         try { $this->setRelation(); } 
         catch (\Throwable $th) {
-            return $this->error($th->getMessage());
+            $this->error($th->getMessage());
+            return false;
         }
 
         // If explicit mode is used but seond model is not given as an option and the relation requires it.
         if ($this->bridge->getModelCount() > 1 && $explicit && !$this->option('second-model')) {
-            return $this->error($errorText);
+            $this->error($errorText);
+            return false;
         }
 
-        parent::handle();
+        if (parent::handle() === false) {
+            return false;
+        };
     }
 
     /**
