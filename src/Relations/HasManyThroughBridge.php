@@ -10,5 +10,5 @@ class HasManyThroughBridge extends RelationBridge
 
     protected static $modelCount = 2;
 
-    public $stubAffix = 'has-through';
+    public static $stubGroupAffix = 'has-through';
 }

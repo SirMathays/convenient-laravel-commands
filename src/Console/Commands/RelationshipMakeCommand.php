@@ -226,13 +226,15 @@ class RelationshipMakeCommand extends GeneratorCommand
     }
 
     /**
-     * Undocumented function
-     *
-     * @return string
+     * {@inheritDoc}
      */
-    protected function getStubPath(): string
+    protected function getStub()
     {
-        return '/stubs/' . $this->bridge->getStubName();
+        if (file_exists($specialStub = $this->resolveStubPath('/stubs/' . $this->bridge::getSpecialStubName()))) {
+            return $specialStub;
+        }
+
+        return $this->resolveStubPath('/stubs/' . $this->bridge::getStubName());
     }
 
     /**

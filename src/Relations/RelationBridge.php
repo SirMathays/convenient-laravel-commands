@@ -36,7 +36,7 @@ abstract class RelationBridge
      * 
      * @var string|null
      */
-    public $stubAffix;
+    public static $stubGroupAffix;
 
     /**
      * Get the relation name.
@@ -96,16 +96,30 @@ abstract class RelationBridge
     }
 
     /**
-     * Get the name basename for the stub.
+     * Get the special basename for the stub.
      *
      * @return string
      */
-    public function getStubName(): string
+    public static function getSpecialStubName(): string
+    {
+        return Str::of(static::getStubName(true))
+            ->replaceLast(
+                '.', 
+                '.' . Str::kebab(static::getName()) . '.'
+            );
+    }
+
+    /**
+     * Get the stub base name.
+     *
+     * @return string
+     */
+    public static function getStubName(bool $ignoreGroup = false): string
     {
         return Str::of('relationship')->when(
-            !is_null($this->stubAffix),
+            !is_null(static::$stubGroupAffix) && !$ignoreGroup,
             function (Stringable $str) {
-                return $str->finish('.' . $this->stubAffix);
+                return $str->finish('.' . static::$stubGroupAffix);
             }
         )->finish('.stub');
     }

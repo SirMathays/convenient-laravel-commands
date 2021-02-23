@@ -10,5 +10,5 @@ class MorphOneBridge extends RelationBridge
 
     protected static $returnsCollection = false;
 
-    public $stubAffix = 'morph';
+    public static $stubGroupAffix = 'morph';
 }

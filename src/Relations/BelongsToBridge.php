@@ -9,6 +9,4 @@ class BelongsToBridge extends RelationBridge
     protected static $relationClassName = BelongsTo::class;
 
     protected static $returnsCollection = false;
-
-    public $stubAffix = 'belongs-to';
 }

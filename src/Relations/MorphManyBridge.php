@@ -8,5 +8,5 @@ class MorphManyBridge extends RelationBridge
 {
     protected static $relationClassName = MorphMany::class;
 
-    public $stubAffix = 'morph';
+    public static $stubGroupAffix = 'morph';
 }
