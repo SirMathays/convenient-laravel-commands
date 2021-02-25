@@ -27,19 +27,19 @@ Here's a brief documentation on the make commands the package provides to be use
 
     artisan make:concern <name>
 
-> Creates a concern trait. It's practically a trait that just follows the Laravel naming conventions. Defaults to the namespace the project's models exist in (e.g. App\Models\Concerns).
+Creates a concern trait. It's practically a trait that just follows the Laravel naming conventions. Defaults to the namespace the project's models exist in (e.g. App\Models\Concerns).
 
 #### Relationship trait
 
     artisan make:relationship --explicit --relation[=RELATION] --model[=MODEL] <name>
 
-> Creates a relationship trait to be used with models. The command tries to guess both the relation and the model class from the `name` argument. Both can be overwritten by providing options for each. By adding the `explicit` option, parsing will not be used and options for both `model` and `relation` must be provided.
+Creates a relationship trait to be used with models. The command tries to guess both the relation and the model class from the `name` argument. Both can be overwritten by providing options for each. By adding the `explicit` option, parsing will not be used and options for both `model` and `relation` must be provided.
 
 #### Scope class
 
     artisan make:scope --extend <name>
 
-> Creates a scope class to be used with models. Defaults to the namespace the project's models exist in (e.g. App\Models\Scopes). When using `extend` option, the class will also include `extend` function, used to apply Builder macros to the model the scope is attached to as a global scope.
+Creates a scope class to be used with models. Defaults to the namespace the project's models exist in (e.g. App\Models\Scopes). When using `extend` option, the class will also include `extend` function, used to apply Builder macros to the model the scope is attached to as a global scope.
 
 ### Commands for creating classes for Spatie's QueryBuilder _(if part of the project)_
 
@@ -48,11 +48,11 @@ Here's a brief documentation on the make commands the package provides to be use
 
 ### Other Commands
 
-#### Generator Command
+#### Generator Command class
 
     artisan make:command-gen --explicit --type[=TYPE] --stub[=STUB] <name>
 
-> Creates a generator command and a stub. Command parses the type name from the given name argument. E.g. `artisan make:command-gen ConcernMakeCommand` would set the command name to be `make:concern` and the stub file to be named `concern.stub`. This behavior can be overwritten with using the `explicit` option and/or providing `type` and `stub` options respectively.
+Creates a generator command and a stub. Command parses the type name from the given name argument. E.g. `artisan make:command-gen ConcernMakeCommand` would set the command name to be `make:concern` and the stub file to be named `concern.stub`. This behavior can be overwritten with using the `explicit` option and/or providing `type` and `stub` options respectively.
 
 ## License
 
