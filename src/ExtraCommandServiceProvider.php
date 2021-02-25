@@ -26,11 +26,12 @@ class ExtraCommandServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $commands = [
                 \SirMathays\Console\Commands\ClassMakeCommand::class,
-                \SirMathays\Console\Commands\InterfaceMakeCommand::class,
-                \SirMathays\Console\Commands\RelationshipMakeCommand::class,
-                \SirMathays\Console\Commands\TraitMakeCommand::class,
                 \SirMathays\Console\Commands\ConcernMakeCommand::class,
                 \SirMathays\Console\Commands\GeneratorCommandMakeCommand::class,
+                \SirMathays\Console\Commands\InterfaceMakeCommand::class,
+                \SirMathays\Console\Commands\RelationshipMakeCommand::class,
+                \SirMathays\Console\Commands\ScopeMakeCommand::class,
+                \SirMathays\Console\Commands\TraitMakeCommand::class,
             ];
 
             // If spatie query builder package exists.
