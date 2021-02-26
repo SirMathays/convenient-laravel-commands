@@ -174,7 +174,7 @@ class RelationshipMakeCommand extends GeneratorCommand
         $relCount = $bridge->getCount();
 
         $namespacedRelationshipInstanceClass = $bridge->returnsCollection()
-            ? '\\' . Collection::class
+            ? '\\' . Collection::class . "<$model>"
             : "\\$namespacedModel";
 
         $relationshipString = $modelStr->singular()->snake(' ');
