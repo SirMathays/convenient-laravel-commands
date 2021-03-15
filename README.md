@@ -23,12 +23,6 @@ Here's a brief documentation on the make commands the package provides to be use
 
 ### Commands for Model development
 
-#### Concern trait
-
-    artisan make:concern <name>
-
-Creates a concern trait. It's practically a trait that just follows the Laravel naming conventions. Defaults to the namespace the project's models exist in (e.g. App\Models\Concerns).
-
 #### Relationship trait
 
     artisan make:relationship --explicit --relation[=RELATION] --model[=MODEL] <name>
@@ -47,6 +41,18 @@ Creates a scope class to be used with models. Defaults to the namespace the proj
     artisan make:query-sort <name>
 
 ### Other Commands
+
+#### Concern trait
+
+    artisan make:concern <name>
+
+Creates a concern trait. It's practically a trait that just follows the Laravel naming conventions. Defaults to the root namespace of the project (e.g. App\Concerns).
+
+#### Contract trait
+
+    artisan make:contract <name>
+
+Creates a contract interface. It's practically an interface that just follows the Laravel naming conventions. Defaults to the root namespace of the project (e.g. App\Contracts).
 
 #### Generator Command class
 

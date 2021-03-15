@@ -27,6 +27,7 @@ class ExtraCommandServiceProvider extends ServiceProvider
             $commands = [
                 \SirMathays\Console\Commands\ClassMakeCommand::class,
                 \SirMathays\Console\Commands\ConcernMakeCommand::class,
+                \SirMathays\Console\Commands\ContractMakeCommand::class,
                 \SirMathays\Console\Commands\GeneratorCommandMakeCommand::class,
                 \SirMathays\Console\Commands\InterfaceMakeCommand::class,
                 \SirMathays\Console\Commands\RelationshipMakeCommand::class,
