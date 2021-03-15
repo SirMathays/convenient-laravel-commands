@@ -32,7 +32,6 @@ class ConcernMakeCommand extends TraitMakeCommand
      */
     protected function getDefaultNamespace($rootNamespace)
     {
-        return $this->getDefaultModelNamespace($rootNamespace)
-            . '\\Concerns';
+        return $rootNamespace . '\\Concerns';
     }
 }

@@ -156,7 +156,7 @@ class GeneratorCommandMakeCommand extends GeneratorCommand
      */
     protected function getDefaultNamespace($rootNamespace)
     {
-        return $rootNamespace . '\Console\Commands';
+        return $rootNamespace . '\\Console\\Commands';
     }
 
 
