@@ -1,6 +1,6 @@
 <?php
 
-namespace SirMathays\Console\Commands;
+namespace SirMathays\Convenience\Console\Commands;
 
 use Illuminate\Console\GeneratorCommand;
 use Illuminate\Support\Str;

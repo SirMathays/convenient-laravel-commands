@@ -1,9 +1,9 @@
 <?php
 
-namespace SirMathays\Console\Commands;
+namespace SirMathays\Convenience\Console\Commands;
 
 use Illuminate\Support\Str;
-use SirMathays\Console\GeneratorCommand;
+use SirMathays\Convenience\Console\GeneratorCommand;
 use Symfony\Component\Console\Input\InputOption;
 
 class ScopeMakeCommand extends GeneratorCommand

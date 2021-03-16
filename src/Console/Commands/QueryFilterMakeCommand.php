@@ -1,8 +1,8 @@
 <?php
 
-namespace SirMathays\Console\Commands;
+namespace SirMathays\Convenience\Console\Commands;
 
-use SirMathays\Console\GeneratorCommand;
+use SirMathays\Convenience\Console\GeneratorCommand;
 
 class QueryFilterMakeCommand extends GeneratorCommand
 {

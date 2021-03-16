@@ -1,8 +1,8 @@
 <?php
 
-namespace SirMathays\Console\Commands;
+namespace SirMathays\Convenience\Console\Commands;
 
-use SirMathays\Console\Commands\InterfaceMakeCommand;
+use SirMathays\Convenience\Console\Commands\InterfaceMakeCommand;
 
 class ContractMakeCommand extends InterfaceMakeCommand
 {

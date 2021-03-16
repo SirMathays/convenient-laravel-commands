@@ -1,6 +1,6 @@
 <?php
 
-namespace SirMathays\Relations;
+namespace SirMathays\Convenience\Relations;
 
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 

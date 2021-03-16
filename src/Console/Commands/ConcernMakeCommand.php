@@ -1,8 +1,8 @@
 <?php
 
-namespace SirMathays\Console\Commands;
+namespace SirMathays\Convenience\Console\Commands;
 
-use SirMathays\Console\Commands\TraitMakeCommand;
+use SirMathays\Convenience\Console\Commands\TraitMakeCommand;
 
 class ConcernMakeCommand extends TraitMakeCommand
 {

@@ -10,13 +10,13 @@
     },
     "autoload": {
         "psr-4": {
-            "SirMathays\\": "src/"
+            "SirMathays\\Convenience\\": "src/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "SirMathays\\ExtraCommandServiceProvider"
+                "SirMathays\\Convenience\\ExtraCommandServiceProvider"
             ]
         }
     },

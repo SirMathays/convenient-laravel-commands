@@ -1,14 +1,14 @@
 <?php
 
-namespace SirMathays\Console\Commands;
+namespace SirMathays\Convenience\Console\Commands;
 
 use Exception;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Arr;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Str;
-use SirMathays\Console\GeneratorCommand;
-use SirMathays\Relations\RelationBridge;
+use SirMathays\Convenience\Console\GeneratorCommand;
+use SirMathays\Convenience\Relations\RelationBridge;
 use Symfony\Component\Console\Input\InputOption;
 
 class RelationshipMakeCommand extends GeneratorCommand
@@ -40,16 +40,16 @@ class RelationshipMakeCommand extends GeneratorCommand
      * @var array
      */
     protected static $relationBridges = [
-        \SirMathays\Relations\BelongsToManyBridge::class,
-        \SirMathays\Relations\BelongsToBridge::class,
-        \SirMathays\Relations\HasManyThroughBridge::class,
-        \SirMathays\Relations\HasManyBridge::class,
-        \SirMathays\Relations\HasOneThroughBridge::class,
-        \SirMathays\Relations\HasOneBridge::class,
-        \SirMathays\Relations\MorphedByManyBridge::class,
-        \SirMathays\Relations\MorphToManyBridge::class,
-        \SirMathays\Relations\MorphManyBridge::class,
-        \SirMathays\Relations\MorphOneBridge::class,
+        \SirMathays\Convenience\Relations\BelongsToManyBridge::class,
+        \SirMathays\Convenience\Relations\BelongsToBridge::class,
+        \SirMathays\Convenience\Relations\HasManyThroughBridge::class,
+        \SirMathays\Convenience\Relations\HasManyBridge::class,
+        \SirMathays\Convenience\Relations\HasOneThroughBridge::class,
+        \SirMathays\Convenience\Relations\HasOneBridge::class,
+        \SirMathays\Convenience\Relations\MorphedByManyBridge::class,
+        \SirMathays\Convenience\Relations\MorphToManyBridge::class,
+        \SirMathays\Convenience\Relations\MorphManyBridge::class,
+        \SirMathays\Convenience\Relations\MorphOneBridge::class,
     ];
 
     /**

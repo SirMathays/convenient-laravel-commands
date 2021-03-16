@@ -1,11 +1,24 @@
 <?php
 
-namespace SirMathays;
+namespace SirMathays\Convenience;
 
+use Illuminate\Support\Arr;
 use Illuminate\Support\ServiceProvider;
 
 class ExtraCommandServiceProvider extends ServiceProvider
 {
+    const CONFIG = 'convenient_commands';
+    
+    /**
+     * Register any application services.
+     *
+     * @return void
+     */
+    public function register()
+    {
+        $this->mergeConfigFrom(__DIR__ . '/../config/' . static::CONFIG . '.php', static::CONFIG);
+    }
+
     /**
      * Bootstrap any package services.
      *
@@ -13,6 +26,10 @@ class ExtraCommandServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        $this->publishes([
+            __DIR__ . '/../config/' . static::CONFIG . '.php' => config_path(static::CONFIG . '.php'),
+        ]);
+
         $this->bootConsoleCommands();
     }
 
@@ -24,27 +41,21 @@ class ExtraCommandServiceProvider extends ServiceProvider
     protected function bootConsoleCommands(): void
     {
         if ($this->app->runningInConsole()) {
-            $commands = [
-                \SirMathays\Console\Commands\ClassMakeCommand::class,
-                \SirMathays\Console\Commands\ConcernMakeCommand::class,
-                \SirMathays\Console\Commands\ContractMakeCommand::class,
-                \SirMathays\Console\Commands\GeneratorCommandMakeCommand::class,
-                \SirMathays\Console\Commands\InterfaceMakeCommand::class,
-                \SirMathays\Console\Commands\RelationshipMakeCommand::class,
-                \SirMathays\Console\Commands\ScopeMakeCommand::class,
-                \SirMathays\Console\Commands\TraitMakeCommand::class,
-            ];
+
+            $commands = Arr::where($this->app['config'][static::CONFIG], function ($active) {
+                return $active === true;
+            });
 
             // If spatie query builder package exists.
-            if (interface_exists('Spatie\QueryBuilder\Sorts\Sort')) {
-                $commands[] = \SirMathays\Console\Commands\QuerySortMakeCommand::class;
+            if (!interface_exists('Spatie\QueryBuilder\Sorts\Sort')) {
+                unset($commands[QuerySortMakeCommand::class]);
             }
 
-            if (interface_exists('Spatie\QueryBuilder\Filters\Filter')) {
-                $commands[] = \SirMathays\Console\Commands\QueryFilterMakeCommand::class;
+            if (!interface_exists('Spatie\QueryBuilder\Filters\Filter')) {
+                unset($commands[QueryFilterMakeCommand::class]);
             }
 
-            $this->commands($commands);
+            $this->commands(array_keys($commands));
         }
     }
 }
