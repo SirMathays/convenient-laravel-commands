@@ -1,3 +1,5 @@
+[![Latest Stable Version](https://poser.pugx.org/sirmathays/convenient-laravel-commands/v)](//packagist.org/packages/sirmathays/convenient-laravel-commands) [![Total Downloads](https://poser.pugx.org/sirmathays/convenient-laravel-commands/downloads)](//packagist.org/packages/sirmathays/convenient-laravel-commands) [![Latest Unstable Version](https://poser.pugx.org/sirmathays/convenient-laravel-commands/v/unstable)](//packagist.org/packages/sirmathays/convenient-laravel-commands) [![License](https://poser.pugx.org/sirmathays/convenient-laravel-commands/license)](//packagist.org/packages/sirmathays/convenient-laravel-commands)
+
 # Convenient Laravel Commands
 
 This package provides some additional, convenient commands for you to use with your Laravel project.
