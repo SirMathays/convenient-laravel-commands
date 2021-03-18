@@ -1,6 +1,18 @@
-[![Latest Stable Version](https://poser.pugx.org/sirmathays/convenient-laravel-commands/v)](//packagist.org/packages/sirmathays/convenient-laravel-commands) [![Total Downloads](https://poser.pugx.org/sirmathays/convenient-laravel-commands/downloads)](//packagist.org/packages/sirmathays/convenient-laravel-commands) [![Latest Unstable Version](https://poser.pugx.org/sirmathays/convenient-laravel-commands/v/unstable)](//packagist.org/packages/sirmathays/convenient-laravel-commands) [![License](https://poser.pugx.org/sirmathays/convenient-laravel-commands/license)](//packagist.org/packages/sirmathays/convenient-laravel-commands)
+<p align="center">
+    <img src="https://matti.suoraniemi.com/storage/forur.png" width="400">
+</p>
 
-# Convenient Laravel Commands
+<p align="center">
+    <a href="https://packagist.org/packages/sirmathays/convenient-laravel-commands">
+        <img src="https://img.shields.io/packagist/dt/sirmathays/convenient-laravel-commands" alt="Total Downloads">
+    </a>
+    <a href="https://packagist.org/packages/sirmathays/convenient-laravel-commands">
+        <img src="https://img.shields.io/packagist/v/sirmathays/convenient-laravel-commands" alt="Latest Stable Version">
+    </a>
+    <a href="https://packagist.org/packages/sirmathays/convenient-laravel-commands">
+        <img src="https://img.shields.io/packagist/l/sirmathays/convenient-laravel-commands" alt="License">
+    </a>
+</p>
 
 This package provides some additional, convenient commands for you to use with your Laravel project.
 
