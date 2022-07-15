@@ -1,6 +1,11 @@
 {
     "name": "sirmathays/convenient-laravel-commands",
     "description": "Adds some very convenient commands to your Laravel project",
+    "keywords": [
+        "laravel",
+        "commands"
+    ],
+    "homepage": "https://matti.suoraniemi.com/creations/packages/convenient-laravel-commands",
     "require": {
         "php": ">=7.1.3",
         "laravel/framework": ">=6.0"
@@ -24,7 +29,7 @@
     "authors": [
         {
             "name": "Matti Suoraniemi",
-            "email": "sir@mathays.xyz"
+            "email": "matti@suoraniemi.com"
         }
     ],
     "minimum-stability": "dev",
